@@ -1,6 +1,6 @@
 # StreamPatrol
 
-StreamPatrol is a comprehensive stream monitoring solution built using Apache Spark, Delta Lake, and Kafka. It provides functionalities for generating random data streams, ingesting data from Kafka, storing data in Delta Lake, and reading from Delta tables.
+StreamPatrol is a stream monitoring solution built using Apache Spark, Delta Lake, and Kafka. It provides functionalities for generating random data streams, ingesting data from Kafka, storing data in Delta Lake, and reading from Delta tables.
 
 ## Table of Contents
 
