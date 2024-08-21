@@ -5,7 +5,7 @@ setup(
     version='0.1.0',
     packages=find_packages(),
     install_requires=[
-        'pyspark==3.3.0',
+        'pyspark==3.5.0',
         'kafka-python-ng==2.2.2',
         'pandas==2.2.2',
         'prettytable==3.11.0'

@@ -2,7 +2,7 @@ import boto3
 import json
 
 
-class KinesisConnector(StreamConnector):
+class KinesisConnector():
     def __init__(self, stream_name, region_name):
         self.stream_name = stream_name
         self.region_name = region_name

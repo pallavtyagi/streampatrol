@@ -9,8 +9,8 @@ kafka_topic = 'spark-stream-monitor'
 # Initialize SparkUtils
 spark_utils = SparkUtils(
     app_name="kafka_to_delta_stream",
-    delta_checkpoint_location="./lakehouse/checkpoints/kafka_to_delta_stream/",
-    delta_table_location="./lakehouse/tables/kafka_to_delta_stream/"
+    delta_checkpoint_location="lakehouse/checkpoints/kafka_to_delta_stream/",
+    delta_table_location="lakehouse/tables/kafka_to_delta_stream/"
 )
 
 # Get Spark session

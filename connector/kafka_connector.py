@@ -1,9 +1,8 @@
 from kafka import KafkaProducer
-from stream_connector import StreamConnector
 import json
 
 
-class KafkaConnector(StreamConnector):
+class KafkaConnector():
     def __init__(self, bootstrap_servers):
         self.bootstrap_servers = bootstrap_servers
         self.producer = KafkaProducer(

@@ -1,4 +1,4 @@
-from kafka_connector import KafkaConnector
+from connector.kafka_connector import KafkaConnector
 from pyspark.sql.streaming import StreamingQueryListener
 import json
 

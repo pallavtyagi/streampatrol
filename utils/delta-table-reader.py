@@ -1,5 +1,5 @@
 from prettytable import PrettyTable
-from spark_utils import SparkUtils
+from spark.spark_utils import SparkUtils
 
 spark_utils = SparkUtils(
     app_name="delta_table_reader",

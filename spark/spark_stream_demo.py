@@ -3,7 +3,7 @@ import string
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 from spark_utils import SparkUtils
-from stream_monitor import CustomStreamingQueryListener
+from monitoring.stream_monitor import CustomStreamingQueryListener
 
 KAFKA_SERVER = 'localhost:9092'
 KAFKA_TOPIC = 'spark-stream-monitor'
