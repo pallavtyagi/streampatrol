@@ -1,7 +1,9 @@
 from kafka import KafkaProducer
+from stream_connector import StreamConnector
 import json
 
-class KafkaConnector:
+
+class KafkaConnector(StreamConnector):
     def __init__(self, bootstrap_servers):
         self.bootstrap_servers = bootstrap_servers
         self.producer = KafkaProducer(
@@ -15,5 +17,3 @@ class KafkaConnector:
 
     def close(self):
         self.producer.close()
-
-
