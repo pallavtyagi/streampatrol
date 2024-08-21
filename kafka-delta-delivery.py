@@ -1,17 +1,37 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-
-# Configure Spark session to use Delta Lake and Kafka
-spark = SparkSession.builder \
-    .appName("kafka_to_delta_stream") \
-    .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,io.delta:delta-spark_2.12:3.0.0rc1") \
-    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-    .getOrCreate()
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType, MapType
+from spark_utils import SparkUtils
 
 # Kafka configuration
 kafka_bootstrap_servers = 'localhost:9092'
 kafka_topic = 'spark-stream-monitor'
+
+# Initialize SparkUtils
+spark_utils = SparkUtils(
+    app_name="kafka_to_delta_stream",
+    delta_checkpoint_location="./lakehouse/checkpoints/kafka_to_delta_stream/",
+    delta_table_location="./lakehouse/tables/kafka_to_delta_stream/"
+)
+
+# Get Spark session
+spark = spark_utils.get_spark_session()
+
+# Define the schema for the JSON data
+json_schema = StructType([
+    StructField("event", StringType(), True),
+    StructField("id", StringType(), True),
+    StructField("runId", StringType(), True),
+    StructField("name", StringType(), True),
+    StructField("timestamp", StringType(), True),
+    StructField("batchId", LongType(), True),
+    StructField("numInputRows", LongType(), True),
+    StructField("inputRowsPerSecond", DoubleType(), True),
+    StructField("processedRowsPerSecond", DoubleType(), True),
+    StructField("durationMs", MapType(StringType(), LongType()), True),
+    StructField("stateOperators", StringType(), True),
+    StructField("sources", StringType(), True),
+    StructField("sink", StringType(), True)
+])
 
 # Read from Kafka
 kafka_df = spark.readStream \
@@ -21,19 +41,12 @@ kafka_df = spark.readStream \
     .load()
 
 # Select the value column and cast it to string
-kafka_df = kafka_df.selectExpr("CAST(value AS STRING)")
+kafka_df = kafka_df.selectExpr("CAST(value AS STRING) as json_value")
+
+# Parse the JSON string and extract keys as columns
+parsed_df = kafka_df.withColumn("parsed_value", from_json(col("json_value"), json_schema)).select("parsed_value.*")
 
 # Write to Delta table
-query = kafka_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "./lakehouse/checkpoints/kafka_to_delta_stream/") \
-    .start("./lakehouse/tables/kafka_to_delta_stream/")
-
-# query = kafka_df.writeStream \
-#     .format("console") \
-#     .outputMode("append") \
-#     .start()
-
+query = spark_utils.write_to_delta(parsed_df)
 
 query.awaitTermination()
